@@ -59,3 +59,24 @@ def deploy():
     if path is None:
         return False
     return do_deploy(path)
+
+
+@runs_once
+def remove_local(number):
+    """ method doc
+        sudo fab -f 1-pack_web_static.py do_pack
+    """
+    local("ls -dt versions/* | tail -n +{} | sudo xargs rm -fr".format(number))
+
+
+@task
+def do_clean(number=0):
+    """ method doc
+        sudo fab -f 1-pack_web_static.py do_pack
+    """
+    if int(number) == 0:
+        number = 1
+    number = int(number) + 1
+    remove_local(number)
+    rem_path = "/data/web_static/releases/*"
+    run("ls -dt {} | tail -n +{} | sudo xargs rm -fr".format(rem_path, number))
